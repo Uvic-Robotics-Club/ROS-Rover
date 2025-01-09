@@ -30,17 +30,24 @@ def main():
             if raw_serial_data:
                 imu_data = get_parsed_serial_data(raw_serial_data)
                 if len(imu_data) == 9:
-                    imu_msg.linear_acceleration.x = imu_data[0]
-                    imu_msg.linear_acceleration.y = imu_data[1]
-                    imu_msg.linear_acceleration.z = imu_data[2]
-                    imu_msg.orientation.x = imu_data[6]
-                    imu_msg.orientation.y = imu_data[7]
-                    imu_msg.orientation.z = imu_data[8]
+
+                    imu_msg.header.stamp = rospy.Time.now()
+                    imu_msg.header.frame_id = "imu_frame"
+
+                    imu_msg.linear_acceleration.x = imu_data[0] #linear acceleration x
+                    imu_msg.linear_acceleration.y = imu_data[1] #linear acceleration y
+                    imu_msg.linear_acceleration.z = imu_data[2] #linear acceleration z
+                    imu_msg.angular_velocity.x = imu_data[6] #angular velocity x
+                    imu_msg.angular_velocity.y = imu_data[7] #angular velocity y
+                    imu_msg.angular_velocity.z = imu_data[8] #angular velocity z
+
+                    #Magnetometer paremeters are not included by default in the IMU message format used here
+
                     imu_pub.publish(imu_msg)
         
                     print("Accel:", imu_data[0], imu_data[1], imu_data[2])
                     print("Mag:", imu_data[3], imu_data[4], imu_data[5])
-                    print("Gyro:", imu_data[6], imu_data[7], imu_data[8])
+                    print("Gyro:", imu_data[6], imu_data[7], imu_data[8], "\n")
 
             #rate.sleep()
 
